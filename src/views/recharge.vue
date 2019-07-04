@@ -295,7 +295,7 @@ export default {
                     "link": require('../images/gift12.png')
                 }
             ],
-            easejoy_bean: 0, //金豆
+            easejoy_bean: 0, //奖品
             lottery_ticket: 0, //抽奖次数
             toast_control: false, //抽奖结果弹出框控制器
             hasPrize: true, //是否中奖
@@ -428,22 +428,38 @@ export default {
                 this.linkAdmin = res.data.data.value
             })
         },
-        
+        // 比较时间
+        CompareDate(d1,d2){
+            return ((new Date(d1.replace(/-/g,"\/"))) > (new Date(d2.replace(/-/g,"\/"))));
+        },
         // init_prize_list(list) {},
         // 点击抽奖
         rotate_handle() {
             this.pointerCover = true
-            let now = new Date()
-            let hours = now.getHours()
-            let day = now.getDate()
-            let setHour = this.setTime.time_from.split(':')[0]
 
-            if (hours < setHour || day < 1) {
-                this.showMask = true
-                this.warmText = '抽奖时间:' + this.setTime.time_from +  "~" + this.setTime.time_to
+
+            var date = new Date();
+            var seperator1 = "-";
+            var seperator2 = ":";
+            var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
+            var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
+            var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
+                    + " "  + date.getHours()  + seperator2  + date.getMinutes()
+                    + seperator2 + date.getSeconds();
+
+            let startTime = this.setTime.date_from + ' ' + this.setTime.time_from
+            let stopTime = this.setTime.date_to + ' ' + this.setTime.time_to
+            if( this.CompareDate( currentdate, startTime) && this.CompareDate( stopTime, currentdate)) {
+                console.log('活动正在进行中')
+                return
+            } else {
+                 this.showMask = true
+                this.warmText = '抽奖时间:' + startTime +  "~" + stopTime
                 this.pointerCover = false;
                 return
             }
+
+
             if (this.username == '') {
                 this.showMask = true
                 this.warmText = '亲～～请输入用户名'
@@ -474,7 +490,6 @@ export default {
                     this.toast_title =  "恭喜您，获得" +  res.data.data.reward.name
                 }
             })
-
             // this.index = 7  //指定每次旋转到的奖品下标
         },
         rotating() {
@@ -507,7 +522,7 @@ export default {
                     that.game_over();
                 }, during_time * 1000 + 1500); // 延时，保证转盘转完
             } else {
-                //
+                //...
             }
         },
         game_over() {
