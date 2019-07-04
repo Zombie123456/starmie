@@ -1,8 +1,8 @@
 {
-  "name": "lion",
+  "name": "Wheel_Promotion_Mobile",
   "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "Snow <snow@unnotech.com>",
+  "description": "Mobile version of wheel promotion",
+  "author": "",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

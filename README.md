@@ -1,4 +1,4 @@
-# lion
+# Wheel Promotion - Mobile
 
 > A Vue.js project
 
