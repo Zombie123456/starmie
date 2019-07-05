@@ -1,7 +1,8 @@
 'use strict'
 const config = require('../config')
 const env = process.env.NODE_ENV === 'development' ? config.dev.env : config.build.env
-const host = 'http://api.chalice.top'
+const host = 'https://api.60929lp.com'
+// const host = env.DOCKERIZED_DEV === '"true"' ? 'http://localhost:8000' : env.HOST.replace(/"/g, '')
 const prefix = host + '/v1/member/'
 export default {
     announcements: prefix + 'announcement/',
@@ -12,5 +13,6 @@ export default {
     getAdmin: prefix + 'global-preferences/domain/',
     getRewardList: prefix + 'rewards/',
     timeLimit: prefix + 'eventtypes/',
-    onlieService: prefix + 'global-preferences/customer_service'
+    onlieService: prefix + 'global-preferences/customer_service',
+    appDownload: prefix + 'global-preferences/app_download'
 }

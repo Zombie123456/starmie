@@ -12,17 +12,10 @@ export default new Router({
     {
         path: '/',
         component: function (resolve) {
-            require(['./views/recharge.vue'], resolve)
+            require(['./views/index.vue'], resolve)
         },
         name: 'home'
     },
-    // {
-    //     path: '/active/rule',
-    //     component: function (resolve) {
-    //         require(['./views/active/rule.vue'], resolve)
-    //     },
-    //     name: 'rule'
-    // },
     {
         path: '/active/check',
         component: function (resolve) {

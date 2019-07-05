@@ -60,17 +60,6 @@
                         </flexbox-item>
                         <flexbox-item :span="3"></flexbox-item>
                     </flexbox>
-                    <!-- <flexbox class="bottom">
-                        <flexbox-item :span="4">
-                            <div class="flex-demo input-title">当日有效投注:</div>
-                        </flexbox-item>
-                        <flexbox-item :span="5">
-                            <div class="flex-demo input-user">
-                                <x-input disabled placeholder="-"></x-input>
-                            </div>
-                        </flexbox-item>
-                        <flexbox-item :span="3"></flexbox-item>
-                    </flexbox> -->
                 </group>             
             </div>
             <!-- 中奖信息 -->
@@ -88,7 +77,7 @@
                                     <nobr>
                                         <span class="yo">{{item.name}}</span>
                                         <span class="yt">{{item.money}}</span>
-                                        <span class="yth">05-08</span>
+                                        <span class="yth">{{prize_date}}</span>
                                     </nobr>
                                 </li>
                             </ul>
@@ -211,7 +200,7 @@
                 </a>
             </li>
             <li class="li02">
-                <a href="https://jsbet088.com/m.html"  target="_blank">
+                <a :href="downLoad"  target="_blank">
                     <span class="img"><img src="../images/img02.png" alt=""></span>
                     <span class="text">下载</span>
                 </a>
@@ -237,6 +226,10 @@ export default {
     data() {
         return {
             linkAdmin: '',
+            prize_date: '',
+            startTime: '',
+            notOntime: false,
+            stopTime: '',
             animate: true,
             show2: true,
             showMask: false,
@@ -245,6 +238,7 @@ export default {
             pointerCover: false,
             saveMoney: '-',
             onlineServiceLink: '',
+            downLoad: '',
             warmText: '',
             warmText1:'',
             toast_title: '',
@@ -322,9 +316,10 @@ export default {
         this.getList()
         this.timeLimit()
         this.getRewardList()
-        this.showRewardList()
+        // this.showRewardList()
         // this.init_prize_list()
         this.getAdmin()
+        this.appDownload()
         this.getOnlineService()
     },
     computed: {
@@ -363,6 +358,29 @@ export default {
                     this.pointerCover = false;
                     return
                 }
+
+
+                var date = new Date();
+                var seperator1 = "-";
+                var seperator2 = ":";
+                var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
+                var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
+                var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
+                        + " "  + date.getHours()  + seperator2  + date.getMinutes()
+                        + seperator2 + date.getSeconds();
+
+                this.startTime = this.setTime.date_from + ' ' + this.setTime.time_from
+                this.stopTime = this.setTime.date_to + ' ' + this.setTime.time_to
+                this.prize_date =month  + seperator1  + strDate
+
+
+                if( this.CompareDate( currentdate, this.startTime) && this.CompareDate( this.stopTime, currentdate)) {
+                    console.log('活动正在进行中')
+                    this.canGetSalary = true
+                } else {
+                    this.notOntime = true
+                    this.canGetSalary = false
+                }
             })
         },
         getOnlineService () {
@@ -379,19 +397,9 @@ export default {
                         this.envelopeFirst = v
                     } else if (i > 0) {
                         this.envelopeLevel.push(v)
-
                     }
                 })
             })
-        },
-        showRewardList() {
-            let now = new Date()
-            let hours = now.getHours()
-            let day = now.getDate()
-            let month = now.getMonth()+1
-            if (hours >= 14 && day >= 1 && month > 4) {
-                this.canGetSalary = true
-            }
         },
         //此方法为处理奖品数据,从后台获取数据
         getRewardList(){
@@ -428,6 +436,12 @@ export default {
                 this.linkAdmin = res.data.data.value
             })
         },
+        appDownload () {
+            this.$http.get(urls.appDownload)
+            .then((res) => {
+                this.downLoad = res.data.data.value
+            })
+        },
         // 比较时间
         CompareDate(d1,d2){
             return ((new Date(d1.replace(/-/g,"\/"))) > (new Date(d2.replace(/-/g,"\/"))));
@@ -437,28 +451,12 @@ export default {
         rotate_handle() {
             this.pointerCover = true
 
-
-            var date = new Date();
-            var seperator1 = "-";
-            var seperator2 = ":";
-            var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
-            var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
-            var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
-                    + " "  + date.getHours()  + seperator2  + date.getMinutes()
-                    + seperator2 + date.getSeconds();
-
-            let startTime = this.setTime.date_from + ' ' + this.setTime.time_from
-            let stopTime = this.setTime.date_to + ' ' + this.setTime.time_to
-            if( this.CompareDate( currentdate, startTime) && this.CompareDate( stopTime, currentdate)) {
-                console.log('活动正在进行中')
-                return
-            } else {
-                 this.showMask = true
-                this.warmText = '抽奖时间:' + startTime +  "~" + stopTime
+            if (this.notOntime) {
+                this.showMask = true
+                this.warmText = '抽奖时间:' + this.startTime +  "~" + this.stopTime
                 this.pointerCover = false;
                 return
             }
-
 
             if (this.username == '') {
                 this.showMask = true

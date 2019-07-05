@@ -2,7 +2,7 @@
     <div>
         <div>
             <div class="header">
-                <a class="logo" href="https://jsbet38.com"></a>
+                <a class="logo" :href="linkAdmin" target="_blank"></a>
                 <p v-if="currentName == 'home'" class="web"><router-link to="/active/check">抽奖记录</router-link></p>
                 <p v-if="currentName == 'check'" class="web"><router-link to="/">返回</router-link></p>
             </div>
@@ -12,21 +12,29 @@
 </template>
 <script>
 import Announcement from '../components/announcement'
+import urls from '../urls'
 export default {
     data () {
         return {
-            currentName: ''
+            currentName: '',
+            linkAdmin: ''
         }
     },
     computed: {
     },
     created () {
         this.checkRouter()
+        this.getAdmin()
     },
     methods: {
         checkRouter() {
-            console.log(this.$router.currentRoute.name)
             this.currentName = this.$router.currentRoute.name
+        },
+        getAdmin () {
+            this.$http.get(urls.getAdmin)
+            .then((res) => {
+                this.linkAdmin = res.data.data.value
+            })
         }
     },
     components: {
