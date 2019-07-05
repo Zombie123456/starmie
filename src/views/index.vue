@@ -231,6 +231,7 @@ export default {
             canClaimOnDate: '',
             startTime: '',
             issmeTime: '',
+            presentTime: '',
             notOntime: false,
             stopTime: '',
             animate: true,
@@ -371,10 +372,13 @@ export default {
                         + seperator2 + date.getSeconds();
 
                 this.prize_date =month  + seperator1  + strDate
-
-
+                this.presentTime = 
                 this.isSameDate = this.$moment(this.$moment(this.setTime.date_from, 'YYYY-MM-DD')).isSame(
                   this.$moment(this.setTime.date_to, 'YYYY-MM-DD')
+                )
+
+                this.presentTime = this.$moment(this.$moment(this.setTime.date_from, 'YYYY-MM-DD')).isSame(
+                  this.$moment(this.$moment().format('YYYY-MM-DD'), 'YYYY-MM-DD')
                 )
                 // 判断是否在两个日期之间
                 this.canClaimOnDate = this.$moment().isBetween(
@@ -388,7 +392,7 @@ export default {
                 )
                 
                 if (
-                    (this.isSameDate && this.issmeTime) ||
+                    (this.isSameDate && this.issmeTime && this.presentTime) ||
                     (this.canClaimOnDate && this.issmeTime)
                 ) {
                     console.log('活动正在进行中')
