@@ -227,7 +227,10 @@ export default {
         return {
             linkAdmin: '',
             prize_date: '',
+            isSameDate: '',
+            canClaimOnDate: '',
             startTime: '',
+            issmeTime: '',
             notOntime: false,
             stopTime: '',
             animate: true,
@@ -359,22 +362,35 @@ export default {
                     return
                 }
 
-
                 var date = new Date();
                 var seperator1 = "-";
                 var seperator2 = ":";
                 var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
                 var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
-                var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
                         + " "  + date.getHours()  + seperator2  + date.getMinutes()
                         + seperator2 + date.getSeconds();
 
-                this.startTime = this.setTime.date_from + ' ' + this.setTime.time_from
-                this.stopTime = this.setTime.date_to + ' ' + this.setTime.time_to
                 this.prize_date =month  + seperator1  + strDate
 
 
-                if( this.CompareDate( currentdate, this.startTime) && this.CompareDate( this.stopTime, currentdate)) {
+                this.isSameDate = this.$moment(this.$moment(this.setTime.date_from, 'YYYY-MM-DD')).isSame(
+                  this.$moment(this.setTime.date_to, 'YYYY-MM-DD')
+                )
+                // 判断是否在两个日期之间
+                this.canClaimOnDate = this.$moment().isBetween(
+                  this.$moment(this.setTime.date_from, 'YYYY-MM-DD'),
+                  this.$moment(this.setTime.date_to, 'YYYY-MM-DD')
+                )
+                // 判断是否在两个时间之间
+                this.issmeTime = this.$moment().isBetween(
+                  this.$moment(this.setTime.time_from, 'H:mm:ss'),
+                  this.$moment(this.setTime.time_to, 'H:mm:ss')
+                )
+                
+                if (
+                    (this.isSameDate && this.issmeTime) ||
+                    (this.canClaimOnDate && this.issmeTime)
+                ) {
                     console.log('活动正在进行中')
                     this.canGetSalary = true
                 } else {
@@ -443,17 +459,16 @@ export default {
             })
         },
         // 比较时间
-        CompareDate(d1,d2){
-            return ((new Date(d1.replace(/-/g,"\/"))) > (new Date(d2.replace(/-/g,"\/"))));
-        },
         // init_prize_list(list) {},
         // 点击抽奖
         rotate_handle() {
+            console.log(this.$moment())
             this.pointerCover = true
 
             if (this.notOntime) {
                 this.showMask = true
-                this.warmText = '抽奖时间:' + this.startTime +  "~" + this.stopTime
+                this.warmText = `抽奖时间:${this.setTime.date_from}～～${this.setTime.date_from}
+                        每天:${this.setTime.time_from}～～${this.setTime.time_to}`
                 this.pointerCover = false;
                 return
             }
