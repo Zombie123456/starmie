@@ -12,5 +12,6 @@ export default {
     getAdmin: prefix + 'global-preferences/domain/',
     getRewardList: prefix + 'rewards/',
     timeLimit: prefix + 'eventtypes/',
-    onlieService: prefix + 'global-preferences/customer_service'
+    onlieService: prefix + 'global-preferences/customer_service',
+    appDownload: prefix + 'global-preferences/app_download'
 }
